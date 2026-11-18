@@ -15,6 +15,7 @@
 //
 // 18.11.2026 It@Efferdland            neu
 // 19.11.2026 It@Efferdland            Gaeste, Lehrerbefehle ausgelagert
+// 19.11.2026 It@Efferdland            Ausgaben mit /std/util/anzeige
 
 #pragma strong_types
 #pragma save_types
@@ -22,28 +23,48 @@
 
 #include "../region.h"
 #include <moving.h>
+#include <anzeige.h>
 
 inherit "/std/thing";
+inherit "/std/util/anzeige";
 
 #define START_RAUM    "/room/raum1"
 #define KOMMUNIKATOR  "/d/raumschiff/obj/kommunikator"
 #define HOLORAUM      "/d/raumschiff/room/[-3+0-1]"
 
+#define SP_HILFE ({ ({ 32, "<" }), ({ 0, "<" }) })
+
 static string hilfe() {
   return
-  "Holodeck-Konsole:\n"
-  "  projekte [frei|<schuljahr>]       Programme mit Team und Zutritt\n"
-  "  lade <projekt> [<schuljahr>]      Programm starten\n"
-  "Fuer Teammitglieder:\n"
-  "  einladen <name> [in <projekt>]    Charakter auf dein Deck lassen\n"
-  "  ausladen <name> [aus <projekt>]   Einladung zuruecknehmen\n"
-  "  gaeste [<projekt>]                Wer ist eingeladen?\n";
+    linie_voll()
+  + rahmen_titel("Holodeck-Konsole", "")
+  + tabellen_linie(SP_HILFE)
+  + tabellen_zeile(SP_HILFE, ({ "Befehl", "Bedeutung" }))
+  + tabellen_linie(SP_HILFE)
+  + tabellen_zeile(SP_HILFE, ({ "projekte [frei|<schuljahr>]",
+                                "Programme mit Team und Zutritt" }))
+  + tabellen_zeile(SP_HILFE, ({ "lade <projekt> [<schuljahr>]",
+                                "Programm starten" }))
+  + tabellen_linie(SP_HILFE)
+  + rahmen_titel("Fuer Teammitglieder", "")
+  + tabellen_linie(SP_HILFE)
+  + tabellen_zeile(SP_HILFE, ({ "Befehl", "Bedeutung" }))
+  + tabellen_linie(SP_HILFE)
+  + tabellen_zeile(SP_HILFE, ({ "einladen <name> [in <projekt>]",
+                                "Charakter auf dein Deck lassen" }))
+  + tabellen_zeile(SP_HILFE, ({ "ausladen <name> [aus <projekt>]",
+                                "Einladung zuruecknehmen" }))
+  + tabellen_zeile(SP_HILFE, ({ "gaeste [<projekt>]",
+                                "Wer ist eingeladen?" }))
+  + tabellen_linie(SP_HILFE);
 }
 
+// P_LONG wird nicht ueber schreibe() ausgegeben: Marker entfernen
 static string konsole_long() {
   return break_string(
     "Eine schraeg gestellte Konsole mit leuchtenden Schaltflaechen. Ueber "
-    "ihr steht in grossen Lettern 'HOLODECK'.", 78) + hilfe();
+    "ihr steht in grossen Lettern 'HOLODECK'.", 78)
+    + marker_entfernen(hilfe());
 }
 
 // Projekte des aktuellen Schuljahres, in denen pl im Team ist
@@ -104,6 +125,9 @@ static string zutritt(mixed *p) {
   return "-";
 }
 
+#define SP_PROJEKTE ({ ({ 18, "<" }), ({ 7, "<" }), ({ 8, "<" }), \
+                       ({ 0, "<" }) })
+
 static int projekte_cmd(string str) {
   string jahr = HOLODECKD->query_jahr();
   int nur_frei;
@@ -123,9 +147,14 @@ static int projekte_cmd(string str) {
           + " sind keine Programme gespeichert.\n");
     return 1;
   }
-  ret = sprintf("Holodeck-Programme im Schuljahr %s:\n\n"
-                "  %-18s %-7s %-9s %s\n", jahr,
-                "Projekt", "Zutritt", "Status", "Team");
+  ret = linie_voll()
+      + rahmen_titel(nur_frei ? "Holodeck-Programme mit Zutritt"
+                              : "Holodeck-Programme",
+                     "Schuljahr " + jahr)
+      + tabellen_linie(SP_PROJEKTE)
+      + tabellen_zeile(SP_PROJEKTE, ({ "Projekt", "Zutritt", "Status",
+                                       "Team" }))
+      + tabellen_linie(SP_PROJEKTE);
 
   foreach (string name : sort_array(m_indices(liste), #'>)) {
     mixed *p = liste[name];
@@ -134,12 +163,17 @@ static int projekte_cmd(string str) {
     if (nur_frei && z == "-") {
       continue;
     }
-    ret += sprintf("  %-18s %-7s %-9s %s\n", name, z,
-                   p[2] ? "gesperrt" : "",
-                   sizeof(p[0]) ? implode(map(p[0], #'capitalize), ", ")
-                                : "-");
+    ret += tabellen_zeile(SP_PROJEKTE, ({
+             name,
+             z == "-" ? FARBE_ROT + z + FARBE_AUS
+                      : FARBE_GRUEN + z + FARBE_AUS,
+             p[2] ? FARBE_GELB "gesperrt" FARBE_AUS : " ",
+             sizeof(p[0]) ? implode(map(p[0], #'capitalize), ", ") : "-" }));
   }
-  write(ret + "\nStarten mit: lade <projekt>\n");
+  schreibe(ret
+           + tabellen_linie(SP_PROJEKTE)
+           + rahmen_text("Starten mit: lade <projekt>")
+           + linie_voll());
   return 1;
 }
 
@@ -297,11 +331,17 @@ static int gaeste_cmd(string str) {
     write("Computer: Das Programm '" + projekt + "' gibt es nicht.\n");
     return 1;
   }
-  write("Gaeste von " + projekt + ": "
-        + (sizeof(p[1]) ? implode(map(sort_array(p[1], #'>), #'capitalize),
-                                  ", ")
-                        : "keine")
-        + "\n");
+  schreibe(linie_voll()
+           + rahmen_titel("Gaeste von " + projekt,
+                          "Schuljahr " + HOLODECKD->query_jahr())
+           + linie_voll()
+           + rahmen_paar("Team:", sizeof(p[0]), "Gaeste:", sizeof(p[1]))
+           + linie_voll()
+           + rahmen_text(sizeof(p[1])
+                         ? implode(map(sort_array(p[1], #'>), #'capitalize),
+                                   ", ")
+                         : "Noch niemand eingeladen.")
+           + linie_voll());
   return 1;
 }
 
@@ -310,7 +350,7 @@ protected void create() {
     set_next_reset(-1);
     return;
   }
-  ::create();
+  thing::create();
   SetProp(P_NAME, "Konsole");
   SetProp(P_GENDER, FEMALE);
   SetProp(P_SHORT, "Die Holodeck-Konsole");
