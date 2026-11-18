@@ -39,7 +39,7 @@ static string hilfe() {
     linie_voll()
   + rahmen_titel("Holodeck-Konsole", "")
   + tabellen_linie(SP_HILFE)
-  + tabellen_zeile(SP_HILFE, ({ "Befehl", "Bedeutung" }))
+  + tabellen_kopf(SP_HILFE, ({ "Befehl", "Bedeutung" }))
   + tabellen_linie(SP_HILFE)
   + tabellen_zeile(SP_HILFE, ({ "projekte [frei|<schuljahr>]",
                                 "Programme mit Team und Zutritt" }))
@@ -48,7 +48,7 @@ static string hilfe() {
   + tabellen_linie(SP_HILFE)
   + rahmen_titel("Fuer Teammitglieder", "")
   + tabellen_linie(SP_HILFE)
-  + tabellen_zeile(SP_HILFE, ({ "Befehl", "Bedeutung" }))
+  + tabellen_kopf(SP_HILFE, ({ "Befehl", "Bedeutung" }))
   + tabellen_linie(SP_HILFE)
   + tabellen_zeile(SP_HILFE, ({ "einladen <name> [in <projekt>]",
                                 "Charakter auf dein Deck lassen" }))
@@ -59,12 +59,12 @@ static string hilfe() {
   + tabellen_linie(SP_HILFE);
 }
 
-// P_LONG wird nicht ueber schreibe() ausgegeben: Marker entfernen
+// P_LONG wird nicht ueber schreibe() ausgegeben
 static string konsole_long() {
   return break_string(
     "Eine schraeg gestellte Konsole mit leuchtenden Schaltflaechen. Ueber "
     "ihr steht in grossen Lettern 'HOLODECK'.", 78)
-    + marker_entfernen(hilfe());
+    + anzeige_text(hilfe());
 }
 
 // Projekte des aktuellen Schuljahres, in denen pl im Team ist
@@ -152,7 +152,7 @@ static int projekte_cmd(string str) {
                               : "Holodeck-Programme",
                      "Schuljahr " + jahr)
       + tabellen_linie(SP_PROJEKTE)
-      + tabellen_zeile(SP_PROJEKTE, ({ "Projekt", "Zutritt", "Status",
+      + tabellen_kopf(SP_PROJEKTE, ({ "Projekt", "Zutritt", "Status",
                                        "Team" }))
       + tabellen_linie(SP_PROJEKTE);
 

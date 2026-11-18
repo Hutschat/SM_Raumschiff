@@ -28,7 +28,7 @@ static string lehrer_hilfe() {
     linie_voll()
   + rahmen_titel("Lehrerpult", "Schuljahr " + HOLODECKD->query_jahr())
   + tabellen_linie(SP_HILFE)
-  + tabellen_zeile(SP_HILFE, ({ "Befehl", "Bedeutung" }))
+  + tabellen_kopf(SP_HILFE, ({ "Befehl", "Bedeutung" }))
   + tabellen_linie(SP_HILFE)
   + tabellen_zeile(SP_HILFE, ({ "holo liste [<schuljahr>]",
                                 "Projekte mit Team und Gaesten" }))
@@ -49,10 +49,10 @@ static string lehrer_hilfe() {
   + tabellen_linie(SP_HILFE);
 }
 
-// P_LONG wird nicht ueber schreibe() ausgegeben: Marker entfernen
+// P_LONG wird nicht ueber schreibe() ausgegeben
 static string pult_long() {
   if (PL && IS_TEACHER(PL)) {
-    return marker_entfernen(lehrer_hilfe());
+    return anzeige_text(lehrer_hilfe());
   }
   return "Ein schmales Pult mit einem Schild: 'Nur fuer Lehrer'.\n";
 }
@@ -71,7 +71,7 @@ static string liste(string jahr) {
          + linie_voll();
   }
   ret += tabellen_linie(SP_LISTE)
-       + tabellen_zeile(SP_LISTE, ({ "Projekt", "Status", "Team",
+       + tabellen_kopf(SP_LISTE, ({ "Projekt", "Status", "Team",
                                      "Gaeste" }))
        + tabellen_linie(SP_LISTE);
 
