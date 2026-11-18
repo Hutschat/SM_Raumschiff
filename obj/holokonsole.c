@@ -168,7 +168,7 @@ static int projekte_cmd(string str) {
              z == "-" ? FARBE_ROT + z + FARBE_AUS
                       : FARBE_GRUEN + z + FARBE_AUS,
              p[2] ? FARBE_GELB "gesperrt" FARBE_AUS : " ",
-             sizeof(p[0]) ? implode(map(p[0], #'capitalize), ", ") : "-" }));
+             sizeof(p[0]) ? implode(map(p[0], #'capitalizeAfterDot), ", ") : "-" }));
   }
   schreibe(ret
            + tabellen_linie(SP_PROJEKTE)
@@ -279,11 +279,11 @@ static int einladen_cmd(string str) {
     write("Computer: " + res + "\n");
     return 1;
   }
-  write("Computer: " + capitalize(gast) + " darf jetzt das Programm "
+  write("Computer: " + capitalizeAfterDot(gast) + " darf jetzt das Programm "
         + projekt + " betreten.\n");
 
   if (pl = find_player(lower_case(gast))) {
-    tell_object(pl, break_string(capitalize(getuid(PL)) + " hat dich auf "
+    tell_object(pl, break_string(capitalizeAfterDot(getuid(PL)) + " hat dich auf "
                 "das Holodeck-Programm " + projekt + " eingeladen. Starten "
                 "kannst du es an der Holodeck-Konsole mit 'lade " + projekt
                 + "'.", 78));
@@ -313,7 +313,7 @@ static int ausladen_cmd(string str) {
     write("Computer: " + res + "\n");
     return 1;
   }
-  write("Computer: " + capitalize(gast) + " ist nicht mehr eingeladen.\n");
+  write("Computer: " + capitalizeAfterDot(gast) + " ist nicht mehr eingeladen.\n");
   rauswerfen(gast, jahr, projekt);
   return 1;
 }
@@ -338,7 +338,7 @@ static int gaeste_cmd(string str) {
            + rahmen_paar("Team:", sizeof(p[0]), "Gaeste:", sizeof(p[1]))
            + linie_voll()
            + rahmen_text(sizeof(p[1])
-                         ? implode(map(sort_array(p[1], #'>), #'capitalize),
+                         ? implode(map(sort_array(p[1], #'>), #'capitalizeAfterDot),
                                    ", ")
                          : "Noch niemand eingeladen.")
            + linie_voll());
