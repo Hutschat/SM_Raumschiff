@@ -1,0 +1,251 @@
+// thing.c
+//
+// Letzte Aenderung:
+//
+// 26.12.2021 It@Efferdland            neu
+// 16.03.2022 It@Efferdland            get_pos()
+
+#pragma no_clone
+
+#include <defines.h>
+#include "def.h"
+
+// 2 Farbige Darstellung (Vordergrund und Hintergrund)
+static string make_color(object pl,string str, string fg, string bg) {
+  if(objectp(pl) && pl->QueryProp(P_TTY) == "ansi") {
+    return bg+fg+str+ANSI_NORMAL;
+  }
+  return str;
+}
+
+static string make_ansi(object pl,string code) {
+  if(pl->QueryProp(P_TTY) == "ansi") {
+    return code;
+  }
+  return "";
+}
+
+// Fuer den dmaker.c aus dem it_compiler. 
+// Dessen Mapping fuer die erlauten Raeume heben das Format:
+//
+// ([
+//     "Raumname" : "Pfad_zum_Std-Objekt",
+//     "Raumname2": "Pfad_zum_Std-Objekt",
+// ])
+//
+// Manchmal braucht man aber die Keys des Mapping als komplette 
+// Pfadangaben. Diese Funktion macht aus den Keys des Mappings ein Array 
+// aus Strings mit den kompletten Pfaden. Also:
+// ({Pfad+"Raumname1", Pfad+"Raumname2"})
+
+public string *area(string path, mapping rl) {
+  string *ret = ({});
+
+  foreach(string arg:m_indices(rl)) {
+    ret += ({path+arg});
+  }
+  return ret;
+}
+
+protected void create() {
+}
+
+// Manche VC Raeume sind nur fuer einen Spieler und haben das Format
+// raumname#spielername. Diese Funktion liefert spielername zurueck, falls
+// vorhanden, ansonsten einen Leerstring
+public varargs string get_clone_owner(<object|string> ob) {
+  string fname,owner,dummy;
+
+  if(!ob) {
+    fname = object_name(ME);
+  }
+  else if(objectp(ob)) {
+    fname = object_name(ob);
+  }
+  else if(stringp(ob)) {
+    fname = ob;
+  }
+  else {
+    return "";
+  }
+  // Das letzte Element ist der File-Name der Objekts
+  fname = explode(fname,"/")[<1];
+
+  if(sscanf(fname,"%s#%s",dummy,owner) == 2) {
+    // Es ist kein 'normaler' Clone mit Clonenummer...
+    if(!to_int(owner)) {
+      // Es gibt einen Spielernamen und dazu gibt es auch einen Spieler:
+      if(player_exists(owner)) {
+        return owner;
+      }
+    }
+  }
+  return "";
+}
+
+public varargs string u_time(int val) {
+  int tmp,t;
+  string s;
+
+  t = time()-val;
+  s = "";
+
+  if (t>=86400) {
+    s += sprintf("%d Tag%s, ",tmp=(t=t%31536000)/86400,(tmp==1?"":"e"));
+  }
+  if (t>=3600) {
+    s += sprintf("%d Stunde%s, ",tmp=(t=t%86400)/3600,(tmp==1?"":"n"));
+  }
+  if (t>60) {
+    s += sprintf("%d Minute%s und ",tmp=(t=t%3600)/60,(tmp==1?"":"n"));
+  }
+  return s+sprintf("%d Sekunde%s",t=t%60,(t==1?"":"n"));
+}
+
+// Waehlt einen Random-Text in einem String.
+//
+// Format: #text1|text2|text3#
+//
+// Beispiel: "#Dies|Das# ist ein #Test|Versuch|Experiment#."
+
+public mixed rand_text(mixed str) {
+  string *s;
+  mixed tmp;
+  int i,j;
+  
+  if(stringp(str)) {
+    str = ({str});
+  }
+  for(j=0;j<sizeof(str);j++) {
+    if(stringp(str[j])) {
+      
+      s = regexplode(str[j],"#*#")-({"#"});
+
+      for(i=0;i<sizeof(s);i++) {
+        if(member(s[i],'|') != -1) {
+          tmp = explode(s[i],"|");
+          
+          s[i] = tmp[random(sizeof(tmp))];
+          
+          str[j] = implode(s,"");
+        }
+      }
+      if(member(str[j],'#') != -1) {
+        dtell("it",str[j]);
+      }
+    }
+  }
+  return str;
+}
+
+// Gibt die x,y,z Koordinaten eines Raums aus
+
+public varargs string *get_pos(object ob) {
+  if(!objectp(ob)) {
+    ob = ME;
+  }
+  string oname = object_name(ob);
+
+  int pos;
+   
+  if((pos = member(oname,'I')) == -1) {
+    if((pos = member(oname,'O')) == -1) {
+      return 0;
+    }
+  }
+  string fname = oname[(pos-12)..(pos-2)];  
+
+  return ({fname[0..3],fname[4..7],fname[8..10]});
+}
+
+
+string make_emblem_1(object pl) {
+  if(!objectp(pl) || !interactive(pl)) {
+    return "";
+  }
+  string str;
+  
+  str  = make_ansi(pl,ANSI_HBG_WHITE)+"                "
+        +make_ansi(pl,ANSI_NORMAL)+"\n";
+
+  str += make_ansi(pl,ANSI_HBG_WHITE)+"  "+
+         make_ansi(pl,ANSI_NORMAL);
+
+  str += make_ansi(pl,ANSI_BG_BLACK)+"            "+
+         make_ansi(pl,ANSI_NORMAL);
+ 
+  str += make_ansi(pl,ANSI_HBG_WHITE)+"  "+
+         make_ansi(pl,ANSI_NORMAL)+"\n";
+
+  str += make_ansi(pl,ANSI_HBG_WHITE)+"  "+
+         make_ansi(pl,ANSI_NORMAL);
+ 
+  str += make_ansi(pl,ANSI_BG_RED+ANSI_HFG_WHITE)+" BRS PROTON "+
+         make_ansi(pl,ANSI_NORMAL);
+
+  str += make_ansi(pl,ANSI_HBG_WHITE)+"  "+
+         make_ansi(pl,ANSI_NORMAL)+"\n";
+
+  str += make_ansi(pl,ANSI_HBG_WHITE)+"  "+
+         make_ansi(pl,ANSI_NORMAL);
+
+  str += make_ansi(pl,ANSI_HBG_YELLOW)+"            "+
+         make_ansi(pl,ANSI_NORMAL);
+
+  str += make_ansi(pl,ANSI_HBG_WHITE)+"  "+
+         make_ansi(pl,ANSI_NORMAL)+"\n";
+
+  str += make_ansi(pl,ANSI_HBG_WHITE)+"                "+
+         make_ansi(pl,ANSI_NORMAL)+"\n";
+
+  return str;
+}
+
+string make_warp_console(object pl) {
+string ret = 
+      // Rahmen oben
+      make_ansi(pl, ANSI_HFG_BLUE) + "  _____________________________________________________________ ______________" + make_ansi(pl, ANSI_NORMAL) + "\n" +
+
+      // Slider 1 + Lampenkasten rechts
+      make_ansi(pl, ANSI_HFG_BLUE) + " | Warp-Kern Energie: [" + make_ansi(pl, ANSI_BG_RED) + "███████" + make_ansi(pl, ANSI_BG_WHITE) + "   ]" +
+      " | " + make_ansi(pl, ANSI_BG_RED) + "  " + make_ansi(pl, ANSI_BG_WHITE) + "  " + make_ansi(pl, ANSI_BG_GREEN) + "  " + make_ansi(pl, ANSI_BG_YELLOW) + "  " + make_ansi(pl, ANSI_NORMAL) + "\n" +
+
+      // Slider 2 + Lampenkasten
+      make_ansi(pl, ANSI_HFG_BLUE) + " | Reaktor Temperatur: [" + make_ansi(pl, ANSI_BG_YELLOW) + "█████" + make_ansi(pl, ANSI_BG_WHITE) + "     ]" +
+      " | " + make_ansi(pl, ANSI_BG_WHITE) + "  " + make_ansi(pl, ANSI_BG_RED) + "  " + make_ansi(pl, ANSI_BG_GREEN) + "  " + make_ansi(pl, ANSI_BG_WHITE) + "  " + make_ansi(pl, ANSI_NORMAL) + "\n" +
+
+      // Slider 3 + Lampenkasten
+      make_ansi(pl, ANSI_HFG_BLUE) + " | Schilde:           [" + make_ansi(pl, ANSI_BG_GREEN) + "██████" + make_ansi(pl, ANSI_BG_WHITE) + "    ]" +
+      " | " + make_ansi(pl, ANSI_BG_YELLOW) + "  " + make_ansi(pl, ANSI_BG_WHITE) + "  " + make_ansi(pl, ANSI_BG_RED) + "  " + make_ansi(pl, ANSI_BG_GREEN) + "  " + make_ansi(pl, ANSI_NORMAL) + "\n" +
+
+      // Trennlinie
+      make_ansi(pl, ANSI_HFG_BLUE) + " |------------------------------|" + make_ansi(pl, ANSI_HFG_BLUE) + "________________|" + make_ansi(pl, ANSI_NORMAL) + "\n" +
+
+      // Knöpfe + Lampenkasten rechts
+      make_ansi(pl, ANSI_HFG_GREEN) + " | [START] " + make_ansi(pl, ANSI_HFG_RED) + "[STOP] " + 
+      make_ansi(pl, ANSI_HFG_YELLOW) + "[RESET] " + make_ansi(pl, ANSI_HFG_MAGENTA) + "[OVERRIDE] " +
+      make_ansi(pl, ANSI_HFG_CYAN) + "[DIAGNOSTIC] " + make_ansi(pl, ANSI_HFG_RED) + "[SHUTDOWN]" +
+      " | " + make_ansi(pl, ANSI_BG_RED) + "  " + make_ansi(pl, ANSI_BG_YELLOW) + "  " + make_ansi(pl, ANSI_BG_GREEN) + "  " +
+      make_ansi(pl, ANSI_BG_WHITE) + "  " + make_ansi(pl, ANSI_BG_RED) + "  " + make_ansi(pl, ANSI_NORMAL) + make_ansi(pl, ANSI_HFG_BLUE) + " |" + make_ansi(pl, ANSI_NORMAL) + "\n" +
+
+      // Rahmen unten
+      make_ansi(pl, ANSI_HFG_BLUE) + " |_________________________________________________________|________________|" + make_ansi(pl, ANSI_NORMAL) + "\n";
+
+write(ret);
+return "";
+}
+
+// Embleme, Schilder etc:
+
+string flottenemblem(object pl) {
+  string txt = read_file(REGION_TEXT+"symbol.txt");
+
+dtell("it",txt);
+  return make_color(pl,txt,ANSI_HFG_WHITE,ANSI_BG_BLUE);
+}
+
+string schiffsplan(object pl) {
+  string txt = read_file(REGION_TEXT+"schiff.txt");
+
+  return make_color(pl,txt,ANSI_HFG_GREEN,ANSI_BG_BLACK);
+}

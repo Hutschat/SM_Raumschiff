@@ -1,0 +1,105 @@
+d/raumschiff/master/master.c line 16 before ';': Undefined function 'laod_object'
+d/raumschiff/def.h line 11 before end of line: Cannot #include 'def.h'
+d/raumschiff/room/holoraum.c line 9 before ' "room";': syntax error
+d/raumschiff/std/room.c line 7 before end of line: Unrecognised # directive
+d/raumschiff/std/room.c line 9 before ';': Unrecognized inheritance modifier 'inherti'
+d/raumschiff/std/room.c line 9 before ';': syntax error
+d/raumschiff/std/room.c line 7 before end of line: Unrecognised # directive
+d/raumschiff/std/room.c line 9 before ';': Unrecognized inheritance modifier 'inherti'
+d/raumschiff/std/room.c line 9 before ';': syntax error
+d/raumschiff/std/room.c line 7 before end of line: Unrecognised # directive
+d/raumschiff/std/room.c line 9 before ';': Unrecognized inheritance modifier 'inhertit'
+d/raumschiff/std/room.c line 9 before ';': syntax error
+d/raumschiff/std/room.c line 9 before ';': Unrecognized inheritance modifier 'inhertit'
+d/raumschiff/std/room.c line 9 before ';': syntax error
+d/raumschiff/holodecks/2425/beispiel/room/raum1.c line 38 before ';': Variable M_GO not declared
+d/raumschiff/holodecks/2425/beispiel/room/raum2.c line 112 before ' ([': Variable P_POOL_CLONES not declared
+d/raumschiff/holodecks/2425/beispiel/room/raum2.c line 112 before ' ([': Variable P_POOL_CLONES not declared
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 621 before ' == -1) {': Too many arguments to simul_efun combine_mapping
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 621 before ' {': == always false because of different types (string* vs int)
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 621 before ' {': Too few arguments to member
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 621 before ' {': Bad arg 1 type to member(): got int, expected mixed*|string|bytes|mapping
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 621 before end of line: syntax error
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 624 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 675 before ' == -1) {': Too many arguments to simul_efun combine_mapping
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 675 before ' {': == always false because of different types (string* vs int)
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 675 before ' {': Too few arguments to member
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 675 before ' {': Bad arg 1 type to member(): got int, expected mixed*|string|bytes|mapping
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 675 before end of line: syntax error
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 774 before ';': Variable str not declared
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 723 before ' == -1) {': Too many arguments to simul_efun combine_mapping
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 723 before ' {': == always false because of different types (string* vs int)
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 749 before '{"hoch","r': syntax error
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 774 before ';': Variable str not declared
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 723 before ' == -1) {': Too many arguments to simul_efun combine_mapping
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 723 before ' {': == always false because of different types (string* vs int)
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 749 before '{"hoch","r': syntax error
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 774 before ';': Variable str not declared
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 723 before ' -1) {': syntax error
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 725 before end of line: Missing 'return <value>' statement
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 726 before ' MakeStrin': syntax error
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 749 before '{"hoch","r': syntax error
+d/raumschiff/holodecks/2425/beispiel/room/raum3.c line 774 before ';': Variable str not declared
+d/raumschiff/std/funcs.c line 36 before 'time());': Variable P_SCHATTEN_OBJ not declared
+d/raumschiff/std/funcs.c line 36 before 'time());': Variable P_SCHATTEN_OBJ not declared
+d/raumschiff/obj/def.h line 1 before end of file: Cannot #include '../def.h'
+d/raumschiff/obj/metallkiste.c line 9 before ' "metallsc': syntax error
+d/raumschiff/obj/def.h line 1 before end of file: Cannot #include '../def.h'
+d/raumschiff/obj/metallschrank.c line 11 before ' "funcs";': syntax error
+d/raumschiff/obj/metallkiste.c line 9 before ' "/obj/" "': syntax error
+d/raumschiff/obj/metallschrank.c line 11 before ' "/obj/" "': syntax error
+d/raumschiff/room/dmaker.c line 20 before end of line: syntax error
+d/raumschiff/room/dmaker.c line 20 before end of line: syntax error
+d/raumschiff/room/std/std_schiff.c line 15 before '1);': Variable P_INDDORS not declared
+d/raumschiff/obj/terminal_win.c line 60 before end of line: Variable ANSI_RED not declared
+d/raumschiff/room/std/flagge.c line 11 before '"         ': Variable ANSI_BG_WHITE not declared
+d/raumschiff/room/std/flagge.c line 12 before ' += ANSI_B': Expected keyword 'in'
+d/raumschiff/room/std/flagge.c line 12 before ' ANSI_BG_W': syntax error
+d/raumschiff/room/std/flagge.c line 12 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/room/std/flagge.c line 12 before end of line: Bad assignment (string vs int)
+d/raumschiff/room/std/flagge.c line 16 before end of line: Return type not matching: got string, expected void
+d/raumschiff/room/std/flagge.c line 16 before end of line: Return type not matching: got string, expected void
+d/raumschiff/room/dmaker.c line 95 before '      REGI': syntax error
+d/raumschiff/room/dmaker.c line 95 before '      REGI': syntax error
+d/raumschiff/std/funcs.c line 170 before '+"\n";': Undefined function 'make_anis'
+d/raumschiff/std/funcs.c line 188 before end of line: syntax error
+d/raumschiff/std/funcs.c line 191 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/std/funcs.c line 191 before end of line: syntax error
+d/raumschiff/std/funcs.c line 170 before '+"\n";': Undefined function 'make_anis'
+d/raumschiff/std/funcs.c line 188 before end of line: syntax error
+d/raumschiff/std/funcs.c line 191 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/std/funcs.c line 191 before end of line: syntax error
+d/raumschiff/std/funcs.c line 188 before end of line: syntax error
+d/raumschiff/std/funcs.c line 191 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/std/funcs.c line 191 before end of line: syntax error
+d/raumschiff/std/funcs.c line 188 before end of line: syntax error
+d/raumschiff/std/funcs.c line 191 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/std/funcs.c line 191 before end of line: syntax error
+d/raumschiff/std/funcs.c line 188 before end of line: syntax error
+d/raumschiff/std/funcs.c line 191 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/std/funcs.c line 191 before end of line: syntax error
+d/raumschiff/std/funcs.c line 188 before end of line: syntax error
+d/raumschiff/std/funcs.c line 191 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/std/funcs.c line 191 before end of line: syntax error
+d/raumschiff/std/funcs.c line 188 before end of line: syntax error
+d/raumschiff/std/funcs.c line 191 before end of line: Bad assignment: illegal lhs (target)
+d/raumschiff/std/funcs.c line 191 before end of line: syntax error
+d/raumschiff/room/std/[-3+0+0].c line 12 before ';': Undefined function 'make_emblem_1'
+d/raumschiff/std/funcs.c line 224 before end of line: Missing 'return <value>' statement
+d/raumschiff/std/funcs.c line 227 before ' ret;': syntax error
+d/raumschiff/std/funcs.c line 224 before end of line: Missing 'return <value>' statement
+d/raumschiff/std/funcs.c line 227 before ' ret;': syntax error
+d/raumschiff/std/funcs.c line 224 before end of line: Missing 'return <value>' statement
+d/raumschiff/std/funcs.c line 227 before ' ret;': syntax error
+d/raumschiff/std/funcs.c line 224 before end of line: Missing 'return <value>' statement
+d/raumschiff/std/funcs.c line 227 before ' ret;': syntax error
+d/raumschiff/room/dmaker.c line 180 before '"b");': Variable P_MAP_SYM not declared
+d/raumschiff/room/std/std_gang.c line 23 before end of line: Variable KES_WALL not declared
+d/raumschiff/room/dmaker.c line 48 before end of line: Variable KEYS_CEILING not declared
+d/raumschiff/room/std/std_schiff.c line 45 before ');': Missing 'return <value>' statement
+d/raumschiff/room/dmaker.c line 169 before ' {': Undefined function 'funktion'
+d/raumschiff/room/dmaker.c line 169 before end of line: syntax error
+d/raumschiff/room/dmaker.c line 169 before ') {': Missing type for argument
+d/raumschiff/room/dmaker.c line 169 before ') {': syntax error
+d/raumschiff/room/dmaker.c line 171 before end of line: Missing 'return <value>' statement
+d/raumschiff/room/dmaker.c line 170 before '));': Variable REGION_TEXTE not declared

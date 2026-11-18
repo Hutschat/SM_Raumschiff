@@ -1,0 +1,67 @@
+Ebene 1 (Wuestenebene)
+                          - - - - - - - + + + + + + 
+                          7 6 5 4 3 2 1 0 1 2 3 4 5 
+
+ 5
+
+ 4  
+ 
+ 3                                   x-x-x-x-x
+                                    /         \
+ 2                                 x   K-B-k   x
+                                  /      |      \
+ 1                               x       g       x
+                                 |       |       |
+ 0                     w-w-w-w-s-s-g-g-g-g-g-g-T x
+                                 |       |       |
+-1                               x       g       x
+                                  \      |      /
+-2                                 x     M     x
+                                    \         /
+-3                                   x-x-x-x-x
+
+-4
+
+-5
+
+
+
+ B: Bruecke  
+ K: Kapitaensbuero
+ k: Konferenzraum
+
+ M: Maschinenraum
+ T: Treppe
+
+Ebene 2
+
+                          - - - - - - - + + + + + +
+                          7 6 5 4 3 2 1 0 1 2 3 4 5 
+
+ 5
+
+ 4  
+ 
+ 3                                   x-x-x-x-x
+                                    /         \
+ 2                                 x     K     x
+                                  /      |      \
+ 1                               x       g       x
+                                 |       |       |
+ 0                               x F-F-g-g-g-g-T x
+                                 |       |       |
+-1                               x       g       x
+                                  \      |      /
+-2                                 x     H     x
+                                    \         /
+-3                                   x-x-x-x-x
+
+-4
+
+-5
+
+K: Krankenstation
+T: Treppe
+H: Holodecks
+F: Frachtraum
+K: Kneipe

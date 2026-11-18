@@ -1,0 +1,26 @@
+// flagge.c
+//
+// 
+
+#include "def.h"
+
+string make_flag() {
+  string str;
+  
+  str  = ANSI_BG_WHITE+"                "+ANSI_NORMAL+"\n";
+  str += ANSI_BG_WHITE+"  "+ANSI_NORMAL;
+  str += ANSI_BG_BLACK+"            "+ANSI_NORMAL;
+  str += ANSI_BG_WHITE+"  "+ANSI_NORMAL+"\n";
+
+  str += ANSI_BG_WHITE+"  "+ANSI_NORMAL;
+  str += ANSI_BG_RED+ANSI_FG_BLACK+" BRS PROTON "+ANSI_NORMAL;
+  str += ANSI_BG_WHITE+"  "+ANSI_NORMAL+"\n";
+
+  str += ANSI_BG_WHITE+"  "+ANSI_NORMAL;
+  str += ANSI_BG_YELLOW+"            "+ANSI_NORMAL;
+  str += ANSI_BG_WHITE+"  "+ANSI_NORMAL+"\n";
+
+  str += ANSI_BG_WHITE+"                "+ANSI_NORMAL+"\n";
+
+  return str;
+}
