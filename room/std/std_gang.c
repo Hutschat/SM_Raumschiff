@@ -22,9 +22,22 @@ protected void create() {
 
   AddDetail(KEYS_WALL,
   ({
-    "Die Wände bestehn aus Metallplatten, die durch Nieten "
+    "Die Wände bestehen aus Metallplatten, die durch Nieten "
     "zusammengehalten werden.",
   }));
-  
+
+  AddDetail(({"metall"}),
+  "Es ist kalt, grau und ziemlich zerkratzt.");
+
+  AddDetail(({"metallplatte","metallplatten","platte","platten"}),
+  "Die Platten sind sauber aneinandergesetzt und mit unzähligen Nieten "
+  "befestigt.");
+
+  AddDetail(({"niete","nieten"}),
+  "Dicke, runde Nieten. Ein paar davon sitzen schon etwas locker.");
+
+  AddDetail(({"sand","wuestensand"}),
+  "Feiner, gelber Sand. Er knirscht leise, wenn du darüber gehst.");
+
   
 }
