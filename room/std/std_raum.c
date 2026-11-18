@@ -16,4 +16,11 @@ protected void create() {
   AddDetail(KEYS_CEILING,
   "Die Decke ist eine einzige Fläche aus flackerndem Licht.");
 
+  AddDetail(({"licht","deckenlicht","beleuchtung"}),
+  "Das Licht kommt direkt aus der Decke. Es ist kalt und weiß.");
+
+  AddDetail(({"flaeche","lichtflaeche"}),
+  "Die ganze Decke leuchtet. Wo genau das Licht herkommt, kannst du "
+  "nicht erkennen.");
+
 }

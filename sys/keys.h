@@ -5,7 +5,7 @@
 
 #define KEYS_COMPUTER        ({"computer","rechner"})
 
-#define KEYS_COMPUTER_SHIP   KEYS_COMPUTER+({"zerntralcomputer",\
+#define KEYS_COMPUTER_SHIP   KEYS_COMPUTER+({"zentralcomputer",\
                              "schiffscomputer","zentraleinheit"})
 
 #define KEYS_DOOR            ({"tuer","schott"})
