@@ -50,4 +50,5 @@ protected void create() {
     "Ein schlichter, offener Durchgang.\n");
 
   AddItem("/d/raumschiff/obj/holokonsole", REFRESH_DESTRUCT);
+  AddItem("/d/raumschiff/obj/lehrerkonsole", REFRESH_DESTRUCT);
 }

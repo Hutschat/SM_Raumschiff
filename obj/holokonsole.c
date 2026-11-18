@@ -1,14 +1,20 @@
-// holokonsole.c - Steuerkonsole fuer die Holodecks
+// holokonsole.c - Holodeck-Konsole fuer alle
 //
-// Spieler:  projekte [<schuljahr>]
-//           lade <projekt> [<schuljahr>]
-// Lehrer:   holo ...   (siehe 'holo hilfe')
+//   projekte [frei|<schuljahr>]          Liste mit Team und Zutritt
+//   lade <projekt> [<schuljahr>]         Deck betreten
 //
-// Rechte und Teams verwaltet /secure/daemon/holodeckd.
+// Nur Teammitglieder (aktuelles Schuljahr):
+//   einladen <name> [in <projekt>]       Charakter als Gast zulassen
+//   ausladen <name> [aus <projekt>]      Gast entfernen (fliegt raus)
+//   gaeste [<projekt>]                   Gaesteliste
+//
+// Jedes Deck ist fuer andere geschlossen, bis das Team jemanden einlaedt.
+// Lehrerbefehle: siehe lehrerkonsole.c
 //
 // Letzte Aenderung:
 //
 // 18.11.2026 It@Efferdland            neu
+// 19.11.2026 It@Efferdland            Gaeste, Lehrerbefehle ausgelagert
 
 #pragma strong_types
 #pragma save_types
@@ -21,62 +27,119 @@ inherit "/std/thing";
 
 #define START_RAUM    "/room/raum1"
 #define KOMMUNIKATOR  "/d/raumschiff/obj/kommunikator"
+#define HOLORAUM      "/d/raumschiff/room/holoraum"
 
-static string lehrer_hilfe() {
+static string hilfe() {
   return
-  "Lehrerbefehle der Holodeck-Konsole (aktuelles Schuljahr: "
-    + HOLODECKD->query_jahr() + "):\n"
-  "  holo jahr <schuljahr>              Schuljahr wechseln (z.B. 2627)\n"
-  "  holo neu <projekt>                 Projekt aus Vorlage anlegen\n"
-  "  holo loesche <projekt>             Projekt aus der Verwaltung nehmen\n"
-  "  holo team <projekt> + <name> ...   Schueler ins Team aufnehmen\n"
-  "  holo team <projekt> - <name> ...   Schueler aus dem Team nehmen\n"
-  "  holo klasse <projekt> <klasse>     ganze Klasse ins Team aufnehmen\n"
-  "  holo besuch <projekt> an|aus       Besuch durch andere erlauben\n"
-  "  holo sperre <projekt> an|aus       Schreibschutz fuer das Team\n";
+  "Holodeck-Konsole:\n"
+  "  projekte [frei|<schuljahr>]       Programme mit Team und Zutritt\n"
+  "  lade <projekt> [<schuljahr>]      Programm starten\n"
+  "Fuer Teammitglieder:\n"
+  "  einladen <name> [in <projekt>]    Charakter auf dein Deck lassen\n"
+  "  ausladen <name> [aus <projekt>]   Einladung zuruecknehmen\n"
+  "  gaeste [<projekt>]                Wer ist eingeladen?\n";
 }
 
 static string konsole_long() {
-  string ret =
+  return break_string(
     "Eine schraeg gestellte Konsole mit leuchtenden Schaltflaechen. Ueber "
-    "ihr steht in grossen Lettern 'HOLODECK'. Mit 'projekte' zeigt sie "
-    "dir die verfuegbaren Programme, mit 'lade <projekt>' startest du eins.";
+    "ihr steht in grossen Lettern 'HOLODECK'.", 78) + hilfe();
+}
 
-  ret = break_string(ret, 78);
+// Projekte des aktuellen Schuljahres, in denen pl im Team ist
+static string *meine_projekte(object pl) {
+  mapping liste = HOLODECKD->query_projekte(HOLODECKD->query_jahr());
+  string *ret   = ({});
 
-  if (PL && IS_TEACHER(PL)) {
-    ret += "\n" + lehrer_hilfe();
+  foreach (string name, mixed *p : liste) {
+    if (member(p[0], getuid(pl)) != -1) {
+      ret += ({ name });
+    }
   }
   return ret;
 }
 
+// Projekt aus der Eingabe oder automatisch, wenn man nur in einem Team ist
+static string welches_projekt(string projekt) {
+  string *meine = meine_projekte(PL);
+
+  if (projekt) {
+    projekt = lower_case(projekt);
+
+    if (member(meine, projekt) == -1 && !IS_TEACHER(PL)) {
+      write("Computer: Du bist nicht im Team von '" + projekt + "'.\n");
+      return 0;
+    }
+    return projekt;
+  }
+  if (sizeof(meine) == 1) {
+    return meine[0];
+  }
+  if (!sizeof(meine)) {
+    write("Computer: Du gehoerst zu keinem Team.\n");
+  }
+  else {
+    write("Computer: Welches Projekt? Du bist in: "
+          + implode(sort_array(meine, #'>), ", ") + "\n");
+  }
+  return 0;
+}
+
 /* ------------------------------------------------------------------ */
-/* Spielerbefehle                                                      */
+/* Anzeigen und Betreten                                               */
 /* ------------------------------------------------------------------ */
 
+static string zutritt(mixed *p) {
+  string uid = getuid(PL);
+
+  if (member(p[0], uid) != -1) {
+    return "Team";
+  }
+  if (member(p[1], uid) != -1) {
+    return "Gast";
+  }
+  if (IS_TEACHER(PL)) {
+    return "Lehrer";
+  }
+  return "-";
+}
+
 static int projekte_cmd(string str) {
-  string jahr = str ? str : HOLODECKD->query_jahr();
-  mapping liste = HOLODECKD->query_projekte(jahr);
+  string jahr = HOLODECKD->query_jahr();
+  int nur_frei;
+  mapping liste;
   string ret;
+
+  if (str == "frei") {
+    nur_frei = 1;
+  }
+  else if (str) {
+    jahr = str;
+  }
+  liste = HOLODECKD->query_projekte(jahr);
 
   if (!sizeof(liste)) {
     write("Computer: Fuer das Schuljahr " + jahr
           + " sind keine Programme gespeichert.\n");
     return 1;
   }
-  ret = "Holodeck-Programme im Schuljahr " + jahr + ":\n\n"
-      + sprintf("  %-20s %-8s %s\n", "Projekt", "Status", "Team");
+  ret = sprintf("Holodeck-Programme im Schuljahr %s:\n\n"
+                "  %-18s %-7s %-9s %s\n", jahr,
+                "Projekt", "Zutritt", "Status", "Team");
 
   foreach (string name : sort_array(m_indices(liste), #'>)) {
     mixed *p = liste[name];
+    string z = zutritt(p);
 
-    ret += sprintf("  %-20s %-8s %s\n", name,
-                   p[2] ? "gesperrt" : (p[1] ? "offen" : "privat"),
+    if (nur_frei && z == "-") {
+      continue;
+    }
+    ret += sprintf("  %-18s %-7s %-9s %s\n", name, z,
+                   p[2] ? "gesperrt" : "",
                    sizeof(p[0]) ? implode(map(p[0], #'capitalize), ", ")
                                 : "-");
   }
-  write(ret + "\nWeitere Schuljahre: "
-        + implode(HOLODECKD->query_schuljahre(), ", ") + "\n");
+  write(ret + "\nStarten mit: lade <projekt>\n");
   return 1;
 }
 
@@ -100,8 +163,8 @@ static int lade_cmd(string str) {
     return 1;
   }
   if (!HOLODECKD->darf_betreten(PL, jahr, projekt)) {
-    write("Computer: Zugriff verweigert. Dieses Programm ist nur fuer "
-          "sein Team freigegeben.\n");
+    write("Computer: Zugriff verweigert. Dafuer brauchst du eine Einladung "
+          "vom Team.\n");
     return 1;
   }
   if (err = catch(raum = load_object(dir + START_RAUM); publish)) {
@@ -130,80 +193,115 @@ static int lade_cmd(string str) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Lehrerbefehle                                                       */
+/* Gaeste (nur Team)                                                   */
 /* ------------------------------------------------------------------ */
 
-static int holo_cmd(string str) {
-  string *arg, msg;
+// Gast, der gerade im Deck steht, zurueck ins Holodeck schicken
+static void rauswerfen(string gast, string jahr, string projekt) {
+  object pl  = find_player(gast);
+  string dir = HOLODECKD->query_projekt_dir(jahr, projekt);
+  string wo;
 
-  if (!PL || !IS_TEACHER(PL)) {
+  if (!pl || !environment(pl) || !dir) {
+    return;
+  }
+  wo = object_name(environment(pl));
+
+  if (sizeof(wo) && wo[0] != '/') {
+    wo = "/" + wo;
+  }
+  if (wo[0..sizeof(dir)] != dir + "/") {
+    return;
+  }
+  tell_object(pl, break_string("Computer: Deine Einladung fuer das Programm "
+              + projekt + " wurde zurueckgenommen. Die Umgebung loest sich "
+              "auf und du stehst wieder im Holodeck.", 78));
+  pl->move(load_object(HOLORAUM), M_TPORT | M_NOCHECK);
+
+  if (present_clone(KOMMUNIKATOR, pl)) {
+    present_clone(KOMMUNIKATOR, pl)->remove();
+  }
+}
+
+static int einladen_cmd(string str) {
+  string gast, projekt, jahr = HOLODECKD->query_jahr();
+  mixed res;
+  object pl;
+
+  notify_fail("Syntax: einladen <name> [in <projekt>]\n");
+
+  if (!str) {
     return 0;
   }
-  arg = str ? explode(str, " ") - ({""}) : ({});
-
-  if (!sizeof(arg) || arg[0] == "hilfe") {
-    write(lehrer_hilfe());
+  if (sscanf(str, "%s in %s", gast, projekt) != 2) {
+    gast = str;
+  }
+  if (!(projekt = welches_projekt(projekt))) {
     return 1;
   }
-  switch (arg[0]) {
-    case "jahr":
-      if (sizeof(arg) != 2) {
-        break;
-      }
-      msg = HOLODECKD->set_jahr(arg[1]);
-      break;
+  res = HOLODECKD->gast_add(jahr, projekt, gast);
 
-    case "neu":
-      if (sizeof(arg) != 2) {
-        break;
-      }
-      msg = HOLODECKD->projekt_neu(lower_case(arg[1]));
-      break;
-
-    case "loesche":
-      if (sizeof(arg) != 2) {
-        break;
-      }
-      msg = HOLODECKD->projekt_loeschen(lower_case(arg[1]));
-      break;
-
-    case "team":
-      if (sizeof(arg) < 4) {
-        break;
-      }
-      if (arg[2] == "+") {
-        msg = HOLODECKD->mitglied_add(lower_case(arg[1]), arg[3..]);
-      }
-      else if (arg[2] == "-") {
-        msg = HOLODECKD->mitglied_del(lower_case(arg[1]), arg[3..]);
-      }
-      break;
-
-    case "klasse":
-      if (sizeof(arg) != 3) {
-        break;
-      }
-      msg = HOLODECKD->klasse_add(lower_case(arg[1]), arg[2]);
-      break;
-
-    case "besuch":
-    case "sperre":
-      if (sizeof(arg) != 3 || member(({"an", "aus"}), arg[2]) == -1) {
-        break;
-      }
-      if (arg[0] == "besuch") {
-        msg = HOLODECKD->set_besuch(lower_case(arg[1]), arg[2] == "an");
-      }
-      else {
-        msg = HOLODECKD->set_gesperrt(lower_case(arg[1]), arg[2] == "an");
-      }
-      break;
-  }
-  if (!msg) {
-    write(lehrer_hilfe());
+  if (stringp(res)) {
+    write("Computer: " + res + "\n");
     return 1;
   }
-  write(break_string("Computer: " + msg, 78));
+  write("Computer: " + capitalize(gast) + " darf jetzt das Programm "
+        + projekt + " betreten.\n");
+
+  if (pl = find_player(lower_case(gast))) {
+    tell_object(pl, break_string(capitalize(getuid(PL)) + " hat dich auf "
+                "das Holodeck-Programm " + projekt + " eingeladen. Starten "
+                "kannst du es an der Holodeck-Konsole mit 'lade " + projekt
+                + "'.", 78));
+  }
+  return 1;
+}
+
+static int ausladen_cmd(string str) {
+  string gast, projekt, jahr = HOLODECKD->query_jahr();
+  mixed res;
+
+  notify_fail("Syntax: ausladen <name> [aus <projekt>]\n");
+
+  if (!str) {
+    return 0;
+  }
+  if (sscanf(str, "%s aus %s", gast, projekt) != 2) {
+    gast = str;
+  }
+  if (!(projekt = welches_projekt(projekt))) {
+    return 1;
+  }
+  gast = lower_case(gast);
+  res  = HOLODECKD->gast_del(jahr, projekt, gast);
+
+  if (stringp(res)) {
+    write("Computer: " + res + "\n");
+    return 1;
+  }
+  write("Computer: " + capitalize(gast) + " ist nicht mehr eingeladen.\n");
+  rauswerfen(gast, jahr, projekt);
+  return 1;
+}
+
+static int gaeste_cmd(string str) {
+  string projekt;
+  mixed *p;
+
+  if (!(projekt = welches_projekt(str))) {
+    return 1;
+  }
+  p = HOLODECKD->query_projekte(HOLODECKD->query_jahr())[projekt];
+
+  if (!p) {
+    write("Computer: Das Programm '" + projekt + "' gibt es nicht.\n");
+    return 1;
+  }
+  write("Gaeste von " + projekt + ": "
+        + (sizeof(p[1]) ? implode(map(sort_array(p[1], #'>), #'capitalize),
+                                  ", ")
+                        : "keine")
+        + "\n");
   return 1;
 }
 
@@ -223,5 +321,7 @@ protected void create() {
 
   AddCmd("projekte", "projekte_cmd");
   AddCmd("lade", "lade_cmd");
-  AddCmd("holo", "holo_cmd");
+  AddCmd("einladen", "einladen_cmd");
+  AddCmd("ausladen", "ausladen_cmd");
+  AddCmd("gaeste", "gaeste_cmd");
 }
