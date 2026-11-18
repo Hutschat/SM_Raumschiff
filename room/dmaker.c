@@ -442,7 +442,12 @@ public varargs void create_room(string file,object o) {
     "Die Nordwand des Raumes ist schlicht weinrot gestrichen. Die "
     "uebrigen Waende bestehen aus elektrochromen Fenstern, die zum einen "
     "den Ausblick in die Wueste freigeben, zum anderen aber auch als "
-    "Projektionsschirm fuer den Schiffscomputer dienen.");
+    "Projektionsschirm fuer den Schiffscomputer dienen. Nur im Westen ist "
+    "neben dem Fenster eine Tuer eingelassen.");
+
+    o->AddDetail(({"kapitaenskajuete","kajuete"}),
+    "Die Kajuete des Kapitaens liegt hinter der Tuer im Westen. Wer sie "
+    "nicht betreten darf, merkt es schnell.");
 
     o->AddDetail(({"fenster"}),
     "Das Suedfenster bietet einen faszinierenden Ausblick in die Wueste. "
@@ -557,6 +562,23 @@ public varargs void create_room(string file,object o) {
       D_FLAGS         : DOOR_CLOSED|DOOR_RESET_CL,
       D_OPENTESTFUNC  : "cant_open_door",
       D_TESTFUNC      : "door_sound",
+      D_OPEN_WITH_MOVE: 1,
+    ]));
+
+    o->NewDoor("westen",REGION_ROOM "[-1+2+0]",
+               ({"westtuer","kajuetentuer"}),
+    ([
+      D_NAME          : "automatische Tuer",
+      D_GENDER        : FEMALE,
+      D_SHORT         : "Eine %se automatische Tuer fuehrt im Westen zur "
+                        "Kapitaenskajuete.",
+      D_LONG          : "Die automatische Tuer zur Kapitaenskajuete ist %s. "
+                        "Sie oeffnet sich nicht fuer jeden.\n",
+      D_RESET_MSG     : "Die automatische Tuer schliesst sich mit "
+                        "einem '"+SND_DOOR+"'.\n",
+      D_FLAGS         : DOOR_CLOSED|DOOR_RESET_CL,
+      D_OPENTESTFUNC  : "cant_open_door",
+      D_TESTFUNC      : "lehrer_tuer",
       D_OPEN_WITH_MOVE: 1,
     ]));
     break;
@@ -722,6 +744,78 @@ public varargs void create_room(string file,object o) {
     case "[-3+0-1]":
     o->SetProp(P_MAP_SYMBOL,"h");
     o->AddExit("osten",       REGION_ROOM "[-2+0-1]");
+    break;
+
+    case "[-1+2+0]":
+    o->SetProp(P_MAP_SYMBOL,"k");
+    o->SetProp(P_INT_SHORT,"Die Kapitaenskajuete der Proton");
+    o->SetProp(P_INT_LONG,
+       "Dies ist die Kajüte des Kapitäns. Ein schwerer Schreibtisch aus "
+       "dunklem Holz steht vor einem runden Bullauge, durch das man in die "
+       "Wüste blickt. An der Wand hängt ein gerahmtes Foto der Proton, und "
+       "in einer Ecke steht ein schmales Bett. Auf dem Schreibtisch liegt "
+       "ein aufgeschlagenes Logbuch.");
+
+    o->AddSpecialDetail(({"kajuete","kapitaenskajuete"}),"_query_int_long");
+
+    o->AddDetail(KEYS_FLOOR+({"teppich"}),
+       "Ein dicker, roter Teppich bedeckt den Boden.");
+
+    o->AddDetail(KEYS_WALL,
+       "Die Wände sind mit hellem Holz verkleidet. An einer hängt das Foto "
+       "der Proton.");
+
+    o->AddDetail(({"schreibtisch","tisch"}),
+       "Ein wuchtiger Schreibtisch aus dunklem Holz. Auf ihm liegt ein "
+       "aufgeschlagenes Logbuch.");
+
+    o->AddDetail(({"holz"}),
+       "Echtes Holz! Das hat sich der Kapitän bestimmt etwas kosten lassen.");
+
+    o->AddDetail(({"kapitaen"}),
+       "Von ihm ist nur das Logbuch geblieben.");
+
+    o->AddDetail(({"bullauge","fenster"}),
+       "Durch das runde Bullauge siehst du die Wüste.");
+
+    o->AddDetail(({"wueste","kurma","sand"}),
+       "Sand, so weit du sehen kannst.");
+
+    o->AddDetail(({"foto","bild","rahmen"}),
+       "Ein gerahmtes Foto der Proton. Damals glänzte sie noch.");
+
+    o->AddDetail(({"ecke"}),
+       "In der Ecke steht das Bett.");
+
+    o->AddDetail(({"bett","koje"}),
+       "Ein schmales Bett, ordentlich gemacht. Der Kapitän hat offenbar "
+       "nicht mehr darin geschlafen.");
+
+    o->AddDetail(({"logbuch","buch"}),
+       "Der letzte Eintrag lautet: Notlandung in der Wüste Kurma. Besatzung "
+       "verlässt das Schiff. Hilfe ist unterwegs.");
+
+    o->AddDetail(({"eintrag"}),
+       "Er ist kurz und ziemlich krakelig.");
+
+    o->AddItem(REGION_OBJ "lehrerkonsole",REFRESH_DESTRUCT);
+
+    o->NewDoor("osten",REGION_ROOM "[+0+2+0]",
+               ({"tuer","schott","osttuer"}),
+    ([
+      D_NAME          : "automatische Tuer",
+      D_GENDER        : FEMALE,
+      D_SHORT         : "Eine %se automatische Tuer befindet sich im "
+                        "Osten.",
+      D_LONG          : "Die automatische Tuer ist %s. Sie oeffnet sich "
+                        "von selbst, sobald man hindurchgehen will.\n",
+      D_RESET_MSG     : "Die automatische Tuer schliesst sich mit "
+                        "einem '"+SND_DOOR+"'.\n",
+      D_FLAGS         : DOOR_CLOSED|DOOR_RESET_CL,
+      D_OPENTESTFUNC  : "cant_open_door",
+      D_TESTFUNC      : "door_sound",
+      D_OPEN_WITH_MOVE: 1,
+    ]));
     break;
   }
 }

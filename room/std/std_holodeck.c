@@ -1,4 +1,4 @@
-// holoraum.c - Von hier aus kann man die Holodecks betreten
+// std_holodeck.c - Das Holodeck [-3+0-1], von hier aus betritt man die Projekte
 //
 // Letzte Aenderung:
 //
