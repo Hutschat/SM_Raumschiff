@@ -10,7 +10,7 @@ inherit REGION_ROOM "std/std_raum";
 
 public int cant_open_door() {
   write(break_string(CTSA("Das ist eine automatische Tür! Sie öffnet sich, "
-        "sobald du sie durschreiten willst!"));
+        "sobald du sie durchschreiten willst!")));
 
   return 1;
 }
@@ -26,7 +26,7 @@ public int door_sound() {
         "einem '"+SND_DOOR+"' und du gehst hindurch. Hinter dir schließt sie "
         "sich wieder."))+"\n");
   
-  tell_room(ME,break_string(CTSA("Die automaische Tür öffnet sich mit einem "
+  tell_room(ME,break_string(CTSA("Die automatische Tür öffnet sich mit einem "
                "'"+SND_DOOR+"'.")),({PL}));
   
   call_out("close_sound",0);
