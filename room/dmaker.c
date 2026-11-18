@@ -312,6 +312,10 @@ public varargs void create_room(string file,object o) {
     
     o->SetProp(P_INT_LONG_EXT,
        "Ein großes Emblem prangt auf dem Boden.\n");
+
+    o->AddDetail(KEYS_FLOOR,
+       "Der Boden besteht aus Metall. Mitten auf der Kreuzung prangt ein "
+       "großes Emblem, halb unter Wüstensand verborgen.");
     
     o->AddDetail(({"emblem","symbol"}),
          function() {
