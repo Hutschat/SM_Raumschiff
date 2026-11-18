@@ -81,8 +81,8 @@ static string liste(string jahr) {
     ret += tabellen_zeile(SP_LISTE, ({
              name,
              p[2] ? FARBE_GELB "gesperrt" FARBE_AUS : " ",
-             sizeof(p[0]) ? implode(map(p[0], #'capitalize), ", ") : "-",
-             sizeof(p[1]) ? implode(map(p[1], #'capitalize), ", ") : "-" }));
+             sizeof(p[0]) ? implode(map(p[0], #'capitalizeAfterDot), ", ") : "-",
+             sizeof(p[1]) ? implode(map(p[1], #'capitalizeAfterDot), ", ") : "-" }));
   }
   return ret
        + tabellen_linie(SP_LISTE)
