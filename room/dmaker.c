@@ -307,8 +307,8 @@ public varargs void create_room(string file,object o) {
        "Die Decke ist an dieser Stelle höher. Über der "
        "Kreuzung blinkt eine rote Warnleuchte und taucht die Umgebung in "
        "einen unsteten roten Schein. Nach Norden führt der Gang zur "
-       "Brücke, nach Süden geht es zum Maschinenraum. Im Osten führt "
-       "eine Treppe auf eine weitere Ebene des Schiffes.");
+       "Brücke, nach Süden geht es zum Maschinenraum. Eine schmale "
+       "Treppe führt hinunter auf eine weitere Ebene des Schiffes.");
     
     o->SetProp(P_INT_LONG_EXT,
        "Ein großes Emblem prangt auf dem Boden.\n");
@@ -350,16 +350,17 @@ public varargs void create_room(string file,object o) {
        "Der Maschinenraum liegt im Süden.");
 
     o->AddDetail(({"treppe","stufen"}),
-       "Eine schmale Treppe führt im Osten auf eine weitere Ebene des "
-       "Schiffes. Leider ist sie eingestürzt.");
+       "Eine schmale Treppe aus Metall führt hinunter auf eine weitere "
+       "Ebene des Schiffes.");
 
-    o->AddDetail(({"ebene","deck"}),
-       "Was auf der oberen Ebene liegt, kannst du von hier aus nicht "
-       "erkennen.");
+    o->AddDetail(({"ebene","deck","unterdeck"}),
+       "Was auf der unteren Ebene liegt, kannst du von hier aus nicht "
+       "erkennen. Du musst schon hinuntergehen.");
 
     o->AddExit("norden",      REGION_ROOM "[+0+1+0]");
     o->AddExit("sueden",      REGION_ROOM "[+0-1+0]");
     o->AddExit("westen",      REGION_ROOM "[-1+0+0]");
+    o->AddExit("unten",       REGION_ROOM "[+0+0-1]");
     break;
 
     case "[+0+1+0]":
@@ -558,6 +559,169 @@ public varargs void create_room(string file,object o) {
       D_TESTFUNC      : "door_sound",
       D_OPEN_WITH_MOVE: 1,
     ]));
+    break;
+
+// Deck 2
+    case "[+0+0-1]":
+    o->SetProp(P_INT_SHORT,"Am Fuss der Treppe");
+    o->SetProp(P_INT_LONG,
+       "Du stehst am Fuß einer schmalen Treppe, die nach oben zur zentralen "
+       "Kreuzung führt. Hier unten ist es deutlich ruhiger als oben. Die "
+       "Decke hängt niedrig, und eine Notbeleuchtung taucht alles in ein "
+       "mattes, grünliches Licht. Nach Westen führt ein Gang, über dem ein "
+       "Schild mit der Aufschrift 'HOLODECK' den Weg weist.");
+
+    o->AddDetail(({"fuss"}),
+       "Hier endet die Treppe.");
+
+    o->AddDetail(({"treppe","stufen"}),
+       "Eine schmale Treppe aus Metall führt nach oben zur Kreuzung.");
+
+    o->AddDetail(({"kreuzung"}),
+       "Die Kreuzung liegt oben. Von hier aus siehst du nur das rote "
+       "Blinken der Warnleuchte.");
+
+    o->AddDetail(({"blinken","warnleuchte"}),
+       "Rot, dunkel, rot, dunkel.");
+
+    o->AddDetail(({"notbeleuchtung","licht","beleuchtung"}),
+       "Kleine grüne Lampen an der Decke. Sie geben gerade genug Licht, "
+       "damit man nicht über die eigenen Füße stolpert.");
+
+    o->AddDetail(({"lampe","lampen"}),
+       "Die Lampen sind klein, grün und ziemlich schwach.");
+
+    o->AddDetail(({"fuesse"}),
+       "Deine Füße stehen auf einer dünnen Schicht Wüstensand.");
+
+    o->AddDetail(({"schicht"}),
+       "Der Sand ist sogar bis hier unten vorgedrungen.");
+
+    o->AddDetail(({"schild","aufschrift","holodeck"}),
+       "Auf dem Schild steht in leuchtenden Buchstaben: HOLODECK. Ein Pfeil "
+       "zeigt nach Westen.");
+
+    o->AddDetail(({"buchstaben"}),
+       "Sie leuchten gelb.");
+
+    o->AddDetail(({"pfeil"}),
+       "Er zeigt nach Westen.");
+
+    o->AddDetail(({"weg"}),
+       "Der Weg zum Holodeck führt nach Westen.");
+
+    o->AddExit("oben",        REGION_ROOM "[+0+0+0]");
+    o->AddExit("westen",      REGION_ROOM "[-1+0-1]");
+    break;
+
+    case "[-1+0-1]":
+    o->SetProp(P_INT_LONG,
+       "Ein schmaler Gang im unteren Deck der Proton. Zu beiden Seiten "
+       "reihen sich verschlossene Türen aneinander, hinter denen früher wohl "
+       "die Besatzung gewohnt hat. Auf einer der Türen klebt ein Zettel. "
+       "Nach Osten geht es zurück zur Treppe, nach Westen weiter zum "
+       "Holodeck.");
+
+    o->AddDetail(({"deck","unterdeck"}),
+       "Das untere Deck der Proton. Hier wohnte die Besatzung.");
+
+    o->AddDetail(({"seite","seiten"}),
+       "Links und rechts nichts als verschlossene Türen.");
+
+    o->AddDetail(({"tuer","tueren","kabine","kabinen"}),
+       "Die Türen sind fest verschlossen. Keine davon lässt sich öffnen.");
+
+    o->AddDetail(({"besatzung","mannschaft"}),
+       "Von der Besatzung fehlt jede Spur.");
+
+    o->AddDetail(({"spur"}),
+       "Nichts. Nicht einmal ein Fußabdruck im Sand.");
+
+    o->AddDetail(({"fussabdruck"}),
+       "Wie gesagt: Nichts.");
+
+    o->AddDetail(({"zettel"}),
+       "Auf dem Zettel steht krakelig: Bitte nicht stoeren! Schlafe!");
+
+    o->AddDetail(({"treppe"}),
+       "Die Treppe liegt im Osten.");
+
+    o->AddDetail(({"holodeck"}),
+       "Das Holodeck liegt im Westen.");
+
+    o->AddExit("osten",       REGION_ROOM "[+0+0-1]");
+    o->AddExit("westen",      REGION_ROOM "[-2+0-1]");
+    break;
+
+    case "[-2+0-1]":
+    o->SetProp(P_INT_LONG,
+       "Hier wird der Gang etwas breiter. An der nördlichen Wand hängt ein "
+       "großer Bildschirm, auf dem in einer Endlosschleife ein Werbefilm "
+       "für das Holodeck läuft: Strände, Berge, Drachen und Raumschlachten "
+       "wechseln sich ab. Im Westen öffnet sich der Gang zum Holodeck, im "
+       "Osten geht es zurück zur Treppe.");
+
+    o->AddDetail(({"bildschirm","werbefilm","film","endlosschleife"}),
+       "Eine fröhliche Stimme ruft: Erleben Sie Abenteuer, die es gar "
+       "nicht gibt! Das Holodeck macht es möglich!");
+
+    o->AddDetail(({"stimme"}),
+       "Sie klingt sehr begeistert. Ein bisschen zu begeistert.");
+
+    o->AddDetail(({"abenteuer"}),
+       "Welche Abenteuer es gibt, zeigt dir die Konsole im Holodeck.");
+
+    o->AddDetail(({"konsole"}),
+       "Die Konsole steht im Holodeck, weiter im Westen.");
+
+    o->AddDetail(({"straende","strand"}),
+       "Weißer Sand und türkisblaues Wasser.");
+
+    o->AddDetail(({"sand"}),
+       "Auf dem Bildschirm sieht er viel einladender aus als der "
+       "Wüstensand hier auf dem Boden.");
+
+    o->AddDetail(({"wasser"}),
+       "Leider nur auf dem Bildschirm.");
+
+    o->AddDetail(({"berge","berg"}),
+       "Schneebedeckte Gipfel unter einem blauen Himmel.");
+
+    o->AddDetail(({"gipfel","himmel"}),
+       "Ein schönes Bild. Echt ist es aber nicht.");
+
+    o->AddDetail(({"bild"}),
+       "Es wechselt alle paar Sekunden.");
+
+    o->AddDetail(({"sekunden"}),
+       "Gerade eben schon wieder.");
+
+    o->AddDetail(({"drachen","drache"}),
+       "Ein riesiger roter Drache speit Feuer direkt in die Kamera.");
+
+    o->AddDetail(({"feuer","kamera"}),
+       "Gut, dass es nur ein Film ist.");
+
+    o->AddDetail(({"raumschlachten","raumschlacht"}),
+       "Kleine Raumschiffe schießen bunte Blitze aufeinander.");
+
+    o->AddDetail(({"raumschiffe","blitze"}),
+       "Ganz anders als die Proton. Die hat schon lange nicht mehr "
+       "geschossen.");
+
+    o->AddDetail(({"treppe"}),
+       "Die Treppe liegt im Osten.");
+
+    o->AddDetail(({"holodeck"}),
+       "Das Holodeck liegt direkt im Westen.");
+
+    o->AddExit("osten",       REGION_ROOM "[-1+0-1]");
+    o->AddExit("westen",      REGION_ROOM "[-3+0-1]");
+    break;
+
+    case "[-3+0-1]":
+    o->SetProp(P_MAP_SYMBOL,"h");
+    o->AddExit("osten",       REGION_ROOM "[-2+0-1]");
     break;
   }
 }

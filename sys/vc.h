@@ -10,6 +10,10 @@
 "[+0+0+0]":   REGION_ROOM "std/std_gang",\
 "[+0+1+0]":   REGION_ROOM "std/std_gang",\
 "[+0+2+0]":   REGION_ROOM "std/std_bruecke",\
+"[+0+0-1]":   REGION_ROOM "std/std_gang",\
+"[-1+0-1]":   REGION_ROOM "std/std_gang",\
+"[-2+0-1]":   REGION_ROOM "std/std_gang",\
+"[-3+0-1]":   REGION_ROOM "holoraum",\
 ])
 
 #endif

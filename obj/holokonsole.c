@@ -27,7 +27,7 @@ inherit "/std/thing";
 
 #define START_RAUM    "/room/raum1"
 #define KOMMUNIKATOR  "/d/raumschiff/obj/kommunikator"
-#define HOLORAUM      "/d/raumschiff/room/holoraum"
+#define HOLORAUM      "/d/raumschiff/room/[-3+0-1]"
 
 static string hilfe() {
   return
