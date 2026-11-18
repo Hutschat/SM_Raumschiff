@@ -4,12 +4,17 @@
 //
 // 08.12.2025 It@Efferdland            neu
 // 18.11.2026 It@Efferdland            Holodeck-Konsole
+// 19.11.2026 It@Efferdland            virtueller Raum [-3+0-1]
 
 #include "def.h"
 
 inherit "/std/room";
 
 protected void create() {
+  if (!clonep()) {
+    set_next_reset(-1);
+    return;
+  }
   ::create();
   SetProp(P_LIGHT, 1);
   SetProp(P_INDOORS, 1);

@@ -16,7 +16,7 @@
 inherit "/std/thing";
 
 #define HOLO_DIR  "/d/raumschiff/holodecks/"
-#define HOLORAUM  "/d/raumschiff/room/holoraum"
+#define HOLORAUM  "/d/raumschiff/room/[-3+0-1]"
 
 private object heimat;
 
