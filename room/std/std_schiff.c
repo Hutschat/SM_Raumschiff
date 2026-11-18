@@ -33,6 +33,16 @@ public int door_sound() {
   return 0;
 } 
 
+// D_TESTFUNC der Tuer zur Kapitaenskajuete: nur Lehrer kommen hinein
+public int lehrer_tuer() {
+  if (!PL || !IS_TEACHER(PL)) {
+    write(break_string(CTSA("Die automatische Tür bleibt geschlossen. Eine "
+          "freundliche Computerstimme sagt: 'Zutritt nur für Lehrer.'")));
+    return 1;
+  }
+  return door_sound();
+}
+
 protected void create() {
   ::create();
   SetProp(P_TERRAIN,T_CONSTRUCT);

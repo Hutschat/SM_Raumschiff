@@ -1,6 +1,6 @@
 // lehrerkonsole.c - Verwaltung der Holodeck-Projekte, nur fuer Lehrer
 //
-// Steht im Workroom der Lehrer:
+// Steht in der Kapitaenskajuete [-1+2+0] und im Workroom der Lehrer:
 //   AddItem("/d/raumschiff/obj/lehrerkonsole", REFRESH_DESTRUCT);
 //
 // Letzte Aenderung:
