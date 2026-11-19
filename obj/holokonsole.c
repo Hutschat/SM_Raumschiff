@@ -245,7 +245,7 @@ static int lade_cmd(string str) {
   // Hinweis VOR dem move, damit er ueber der Raumbeschreibung steht
   tell_object(PL, anzeige_text(rot(break_string("ZURUECK INS HOLODECK "
               "KOMMST DU JEDERZEIT MIT DEINEM KOMMUNIKATOR: 'ENDE PROGRAMM' "
-              "ODER 'COMPUTER, ENDE'.", 78))));
+              "ODER 'COMPUTER, ENDE'."))) + "\n");
 
   PL->move(raum, M_TPORT | M_NOCHECK);
   return 1;
