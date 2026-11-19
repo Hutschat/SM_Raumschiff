@@ -9,7 +9,7 @@
 //   gaeste [<nr|projekt>]                Gaesteliste
 //
 // Jedes Deck ist fuer andere geschlossen, bis das Team jemanden einlaedt.
-// Lehrerbefehle: siehe lehrerkonsole.c
+// Lehrerbefehle: projekt/projekte in der Lehrer-Shell (mod_mag_holodeck.c)
 //
 // Letzte Aenderung:
 //
