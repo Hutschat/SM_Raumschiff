@@ -188,6 +188,15 @@ static int projekte_cmd(string str) {
   return 1;
 }
 
+// Jede Zeile rot markieren (Farbe nur bei ANSI, siehe anzeige_text)
+static string rot_zeile(string zeile) {
+  return sizeof(zeile) ? FARBE_ROT + zeile + FARBE_AUS : zeile;
+}
+
+static string rot(string text) {
+  return implode(map(explode(text, "\n"), #'rot_zeile), "\n");
+}
+
 static int lade_cmd(string str) {
   string projekt, jahr, dir, err;
   object raum, kom;
@@ -235,9 +244,9 @@ static int lade_cmd(string str) {
 
   PL->move(raum, M_TPORT | M_NOCHECK);
 
-  tell_object(PL, break_string("ZURUECK INS HOLODECK KOMMST DU JEDERZEIT "
-              "MIT DEINEM KOMMUNIKATOR: 'ENDE PROGRAMM' ODER "
-              "'COMPUTER, ENDE'.", 78));
+  tell_object(PL, anzeige_text(rot(break_string("ZURUECK INS HOLODECK "
+              "KOMMST DU JEDERZEIT MIT DEINEM KOMMUNIKATOR: 'ENDE PROGRAMM' "
+              "ODER 'COMPUTER, ENDE'.", 78))));
   return 1;
 }
 
