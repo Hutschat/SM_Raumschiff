@@ -126,8 +126,10 @@ static string zutritt(mixed *p) {
   return "-";
 }
 
-#define SP_PROJEKTE ({ ({ 3, ">" }), ({ 18, "<" }), ({ 7, "<" }), \
-                       ({ 8, "<" }), ({ 0, "<" }) })
+// Nummer und Projekt in einer Spalte: Tabellenspalten sind mindestens
+// 6 Zeichen breit, die Nummer braucht nur 3 ("%3s projekt").
+#define SP_PROJEKTE ({ ({ 24, "<" }), ({ 7, "<" }), ({ 8, "<" }), \
+                       ({ 0, "<" }) })
 
 // Projektnamen nach Nummer sortiert
 static int nr_groesser(string a, string b, mapping liste) {
@@ -162,7 +164,7 @@ static int projekte_cmd(string str) {
                               : "Holodeck-Programme",
                      "Schuljahr " + jahr)
       + tabellen_linie(SP_PROJEKTE)
-      + tabellen_kopf(SP_PROJEKTE, ({ "Nr", "Projekt", "Zutritt",
+      + tabellen_kopf(SP_PROJEKTE, ({ " Nr Projekt", "Zutritt",
                                        "Status", "Team" }))
       + tabellen_linie(SP_PROJEKTE);
 
@@ -174,8 +176,7 @@ static int projekte_cmd(string str) {
       continue;
     }
     ret += tabellen_zeile(SP_PROJEKTE, ({
-             to_string(p[3]),
-             name,
+             sprintf("%3s %s", to_string(p[3]), name),
              z == "-" ? FARBE_ROT + z + FARBE_AUS
                       : FARBE_GRUEN + z + FARBE_AUS,
              p[2] ? FARBE_GELB "gesperrt" FARBE_AUS : " ",
