@@ -15,6 +15,7 @@
 #include "../region.h"
 
 #include <anzeige.h>
+#include <moving.h>
 
 inherit "/std/thing";
 inherit "/std/util/anzeige";
@@ -37,7 +38,7 @@ static string lehrer_hilfe() {
   + tabellen_zeile(SP_HILFE, ({ "holo neu <projekt>",
                                 "Projekt aus Vorlage anlegen" }))
   + tabellen_zeile(SP_HILFE, ({ "holo loesche <projekt>",
-                                "Projekt aus der Verwaltung nehmen" }))
+                                "Projekt samt Dateien loeschen" }))
   + tabellen_zeile(SP_HILFE, ({ "holo team <projekt> + <name> ...",
                                 "Schueler ins Team aufnehmen" }))
   + tabellen_zeile(SP_HILFE, ({ "holo team <projekt> - <name> ...",
@@ -91,6 +92,62 @@ static string liste(string jahr) {
        + linie_voll();
 }
 
+#define HOLORAUM  "/d/raumschiff/room/[-3+0-1]"
+
+// Wer gerade im Projekt steht, kommt zurueck ins Holodeck
+static void deck_raeumen(string dir) {
+  foreach (object pl : users()) {
+    string wo;
+
+    if (!environment(pl)) {
+      continue;
+    }
+    wo = object_name(environment(pl));
+
+    if (sizeof(wo) && wo[0] != '/') {
+      wo = "/" + wo;
+    }
+    if (wo[0..sizeof(dir)] == dir + "/") {
+      tell_object(pl, break_string("Computer: Dieses Programm wird "
+                  "geloescht. Die Umgebung loest sich auf und du stehst "
+                  "wieder im Holodeck.", 78));
+      pl->move(load_object(HOLORAUM), M_TPORT | M_NOCHECK);
+    }
+  }
+}
+
+static void loesche_antwort(string antwort, string projekt) {
+  string dir;
+
+  if (!PL || !IS_TEACHER(PL)) {
+    return;
+  }
+  if (lower_case(antwort || "") != "ja") {
+    write("Computer: Abgebrochen, nichts geloescht.\n");
+    return;
+  }
+  if (dir = HOLODECKD->query_projekt_dir(HOLODECKD->query_jahr(), projekt)) {
+    deck_raeumen(dir);
+  }
+  write(break_string("Computer: "
+        + HOLODECKD->projekt_loeschen(projekt), 78));
+}
+
+static int loesche_fragen(string projekt) {
+  string dir = HOLODECKD->query_projekt_dir(HOLODECKD->query_jahr(), projekt);
+
+  if (!dir) {
+    write("Computer: Das Projekt " + projekt + " gibt es nicht.\n");
+    return 1;
+  }
+  write(break_string("ACHTUNG: Das Projekt " + projekt + " wird samt ALLEN "
+        "Dateien in " + dir + " geloescht. Das laesst sich nicht "
+        "rueckgaengig machen.", 78)
+        + "Wirklich loeschen? (ja/nein) ");
+  input_to("loesche_antwort", 0, projekt);
+  return 1;
+}
+
 static int holo_cmd(string str) {
   string *arg, msg;
 
@@ -122,7 +179,7 @@ static int holo_cmd(string str) {
 
     case "loesche":
       if (sizeof(arg) == 2) {
-        msg = HOLODECKD->projekt_loeschen(lower_case(arg[1]));
+        return loesche_fragen(lower_case(arg[1]));
       }
       break;
 
