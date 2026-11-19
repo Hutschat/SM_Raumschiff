@@ -24,6 +24,7 @@
 #include "../region.h"
 #include <moving.h>
 #include <anzeige.h>
+#include <shells.h>
 
 inherit "/std/thing";
 inherit "/std/util/anzeige";
@@ -248,6 +249,12 @@ static int lade_cmd(string str) {
               "ODER 'COMPUTER, ENDE'."))) + "\n");
 
   PL->move(raum, M_TPORT | M_NOCHECK);
+
+  // Programmierer arbeiten gleich im richtigen Verzeichnis
+  if (IS_LEARNER(PL)) {
+    PL->SetProp(P_CURRENTDIR, dir);
+    tell_object(PL, "Dein aktuelles Verzeichnis ist jetzt " + dir + ".\n");
+  }
   return 1;
 }
 
