@@ -343,6 +343,11 @@ static int ausladen_cmd(string str) {
   return 1;
 }
 
+// "C.hansen, M.meyer"
+static string namen_liste(string *namen) {
+  return implode(map(sort_array(namen, #'>), #'capitalizeAfterDot), ", ");
+}
+
 static int gaeste_cmd(string str) {
   string projekt;
   mixed *p;
@@ -357,15 +362,14 @@ static int gaeste_cmd(string str) {
     return 1;
   }
   schreibe(linie_voll()
-           + rahmen_titel("Gaeste von " + projekt,
+           + rahmen_titel(projekt + " (Nr. " + to_string(p[3]) + ")",
                           "Schuljahr " + HOLODECKD->query_jahr())
            + linie_voll()
-           + rahmen_paar("Team:", sizeof(p[0]), "Gaeste:", sizeof(p[1]))
-           + linie_voll()
-           + rahmen_text(sizeof(p[1])
-                         ? implode(map(sort_array(p[1], #'>), #'capitalizeAfterDot),
-                                   ", ")
-                         : "Noch niemand eingeladen.")
+           + rahmen_text("Team (" + sizeof(p[0]) + "):   "
+                         + (sizeof(p[0]) ? namen_liste(p[0]) : "-"))
+           + rahmen_text("Gaeste (" + sizeof(p[1]) + "): "
+                         + (sizeof(p[1]) ? namen_liste(p[1])
+                                         : "noch niemand eingeladen"))
            + linie_voll());
   return 1;
 }
