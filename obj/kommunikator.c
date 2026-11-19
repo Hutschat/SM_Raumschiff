@@ -1,6 +1,7 @@
 // kommunikator.c - Wird beim Laden eines Holodeck-Programms ausgehaendigt.
 //
-// 'computer, ende' bzw. 'ende programm' bringt zurueck zum Holodeck.
+// 'ende programm', 'programm ende', 'computer ende' oder 'computer, ende'
+// bringt zurueck zum Holodeck.
 //
 // Letzte Aenderung:
 //
@@ -36,14 +37,27 @@ private int im_holodeck(object ob) {
 static int ende_cmd(string str) {
   object ziel;
 
-  if (query_verb() == "computer,") {
-    if (str != "ende" && str != "programm ende") {
-      return 0;
-    }
-  }
-  else if (str != "programm") {
-    notify_fail("Meinst du 'ende programm'?\n");
-    return 0;
+  // ende programm, programm ende, computer ende, computer, ende,
+  // computer programm ende
+  switch (query_verb()) {
+    case "ende":
+      if (str != "programm") {
+        notify_fail("Meinst du 'ende programm'?\n");
+        return 0;
+      }
+      break;
+
+    case "programm":
+      if (str != "ende") {
+        notify_fail("Meinst du 'programm ende'?\n");
+        return 0;
+      }
+      break;
+
+    default:   // "computer" und "computer,"
+      if (str != "ende" && str != "programm ende") {
+        return 0;
+      }
   }
   ziel = heimat || load_object(HOLORAUM);
 
@@ -89,4 +103,6 @@ protected void create() {
 
   AddCmd("ende", "ende_cmd");
   AddCmd("computer,", "ende_cmd");
+  AddCmd("computer", "ende_cmd");
+  AddCmd("programm", "ende_cmd");
 }
