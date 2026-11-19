@@ -1,12 +1,12 @@
 // holokonsole.c - Holodeck-Konsole fuer alle
 //
 //   projekte [frei|<schuljahr>]          Liste mit Team und Zutritt
-//   lade <projekt> [<schuljahr>]         Deck betreten
+//   lade <nr|projekt> [<schuljahr>]      Deck betreten
 //
 // Nur Teammitglieder (aktuelles Schuljahr):
-//   einladen <name> [in <projekt>]       Charakter als Gast zulassen
-//   ausladen <name> [aus <projekt>]      Gast entfernen (fliegt raus)
-//   gaeste [<projekt>]                   Gaesteliste
+//   einladen <name> [in <nr|projekt>]    Charakter als Gast zulassen
+//   ausladen <name> [aus <nr|projekt>]   Gast entfernen (fliegt raus)
+//   gaeste [<nr|projekt>]                Gaesteliste
 //
 // Jedes Deck ist fuer andere geschlossen, bis das Team jemanden einlaedt.
 // Lehrerbefehle: siehe lehrerkonsole.c
@@ -43,18 +43,18 @@ static string hilfe() {
   + tabellen_linie(SP_HILFE)
   + tabellen_zeile(SP_HILFE, ({ "projekte [frei|<schuljahr>]",
                                 "Programme mit Team und Zutritt" }))
-  + tabellen_zeile(SP_HILFE, ({ "lade <projekt> [<schuljahr>]",
+  + tabellen_zeile(SP_HILFE, ({ "lade <nr> [<schuljahr>]",
                                 "Programm starten" }))
   + tabellen_linie(SP_HILFE)
   + rahmen_titel("Fuer Teammitglieder", "")
   + tabellen_linie(SP_HILFE)
   + tabellen_kopf(SP_HILFE, ({ "Befehl", "Bedeutung" }))
   + tabellen_linie(SP_HILFE)
-  + tabellen_zeile(SP_HILFE, ({ "einladen <name> [in <projekt>]",
+  + tabellen_zeile(SP_HILFE, ({ "einladen <name> [in <nr>]",
                                 "Charakter auf dein Deck lassen" }))
-  + tabellen_zeile(SP_HILFE, ({ "ausladen <name> [aus <projekt>]",
+  + tabellen_zeile(SP_HILFE, ({ "ausladen <name> [aus <nr>]",
                                 "Einladung zuruecknehmen" }))
-  + tabellen_zeile(SP_HILFE, ({ "gaeste [<projekt>]",
+  + tabellen_zeile(SP_HILFE, ({ "gaeste [<nr>]",
                                 "Wer ist eingeladen?" }))
   + tabellen_linie(SP_HILFE);
 }
@@ -85,7 +85,8 @@ static string welches_projekt(string projekt) {
   string *meine = meine_projekte(PL);
 
   if (projekt) {
-    projekt = lower_case(projekt);
+    projekt = HOLODECKD->projekt_name(HOLODECKD->query_jahr(), projekt)
+              || lower_case(projekt);
 
     if (member(meine, projekt) == -1 && !IS_TEACHER(PL)) {
       write("Computer: Du bist nicht im Team von '" + projekt + "'.\n");
@@ -125,8 +126,17 @@ static string zutritt(mixed *p) {
   return "-";
 }
 
-#define SP_PROJEKTE ({ ({ 18, "<" }), ({ 7, "<" }), ({ 8, "<" }), \
-                       ({ 0, "<" }) })
+#define SP_PROJEKTE ({ ({ 3, ">" }), ({ 18, "<" }), ({ 7, "<" }), \
+                       ({ 8, "<" }), ({ 0, "<" }) })
+
+// Projektnamen nach Nummer sortiert
+static int nr_groesser(string a, string b, mapping liste) {
+  return liste[a][3] > liste[b][3];
+}
+
+static string *nach_nummer(mapping liste) {
+  return sort_array(m_indices(liste), #'nr_groesser, liste);
+}
 
 static int projekte_cmd(string str) {
   string jahr = HOLODECKD->query_jahr();
@@ -152,11 +162,11 @@ static int projekte_cmd(string str) {
                               : "Holodeck-Programme",
                      "Schuljahr " + jahr)
       + tabellen_linie(SP_PROJEKTE)
-      + tabellen_kopf(SP_PROJEKTE, ({ "Projekt", "Zutritt", "Status",
-                                       "Team" }))
+      + tabellen_kopf(SP_PROJEKTE, ({ "Nr", "Projekt", "Zutritt",
+                                       "Status", "Team" }))
       + tabellen_linie(SP_PROJEKTE);
 
-  foreach (string name : sort_array(m_indices(liste), #'>)) {
+  foreach (string name : nach_nummer(liste)) {
     mixed *p = liste[name];
     string z = zutritt(p);
 
@@ -164,6 +174,7 @@ static int projekte_cmd(string str) {
       continue;
     }
     ret += tabellen_zeile(SP_PROJEKTE, ({
+             to_string(p[3]),
              name,
              z == "-" ? FARBE_ROT + z + FARBE_AUS
                       : FARBE_GRUEN + z + FARBE_AUS,
@@ -172,7 +183,7 @@ static int projekte_cmd(string str) {
   }
   schreibe(ret
            + tabellen_linie(SP_PROJEKTE)
-           + rahmen_text("Starten mit: lade <projekt>")
+           + rahmen_text("Starten mit: lade <nr>, z.B. lade 1")
            + linie_voll());
   return 1;
 }
@@ -181,7 +192,7 @@ static int lade_cmd(string str) {
   string projekt, jahr, dir, err;
   object raum, kom;
 
-  notify_fail("Syntax: lade <projekt> [<schuljahr>]\n");
+  notify_fail("Syntax: lade <nr> [<schuljahr>]\n");
 
   if (!str) {
     return 0;
@@ -190,7 +201,7 @@ static int lade_cmd(string str) {
     projekt = str;
     jahr    = HOLODECKD->query_jahr();
   }
-  projekt = lower_case(projekt);
+  projekt = HOLODECKD->projekt_name(jahr, projekt) || lower_case(projekt);
 
   if (!(dir = HOLODECKD->query_projekt_dir(jahr, projekt))) {
     write("Computer: Das Programm '" + projekt + "' ist nicht gespeichert.\n");
@@ -223,6 +234,10 @@ static int lade_cmd(string str) {
       + " und verschwindet durch das Arch.", 78));
 
   PL->move(raum, M_TPORT | M_NOCHECK);
+
+  tell_object(PL, break_string("ZURUECK INS HOLODECK KOMMST DU JEDERZEIT "
+              "MIT DEINEM KOMMUNIKATOR: 'ENDE PROGRAMM' ODER "
+              "'COMPUTER, ENDE'.", 78));
   return 1;
 }
 
@@ -262,7 +277,7 @@ static int einladen_cmd(string str) {
   mixed res;
   object pl;
 
-  notify_fail("Syntax: einladen <name> [in <projekt>]\n");
+  notify_fail("Syntax: einladen <name> [in <nr>]\n");
 
   if (!str) {
     return 0;
@@ -295,7 +310,7 @@ static int ausladen_cmd(string str) {
   string gast, projekt, jahr = HOLODECKD->query_jahr();
   mixed res;
 
-  notify_fail("Syntax: ausladen <name> [aus <projekt>]\n");
+  notify_fail("Syntax: ausladen <name> [aus <nr>]\n");
 
   if (!str) {
     return 0;

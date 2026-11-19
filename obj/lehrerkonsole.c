@@ -21,8 +21,8 @@ inherit "/std/thing";
 inherit "/std/util/anzeige";
 
 #define SP_HILFE  ({ ({ 34, "<" }), ({ 0, "<" }) })
-#define SP_LISTE  ({ ({ 16, "<" }), ({ 8, "<" }), ({ 20, "<" }), \
-                     ({ 0, "<" }) })
+#define SP_LISTE  ({ ({ 3, ">" }), ({ 16, "<" }), ({ 8, "<" }), \
+                     ({ 18, "<" }), ({ 0, "<" }) })
 
 static string lehrer_hilfe() {
   return
@@ -37,15 +37,15 @@ static string lehrer_hilfe() {
                                 "Schuljahr wechseln (z.B. 2627)" }))
   + tabellen_zeile(SP_HILFE, ({ "holo neu <projekt>",
                                 "Projekt aus Vorlage anlegen" }))
-  + tabellen_zeile(SP_HILFE, ({ "holo loesche <projekt>",
+  + tabellen_zeile(SP_HILFE, ({ "holo loesche <nr>",
                                 "Projekt samt Dateien loeschen" }))
-  + tabellen_zeile(SP_HILFE, ({ "holo team <projekt> + <name> ...",
+  + tabellen_zeile(SP_HILFE, ({ "holo team <nr> + <name> ...",
                                 "Schueler ins Team aufnehmen" }))
-  + tabellen_zeile(SP_HILFE, ({ "holo team <projekt> - <name> ...",
+  + tabellen_zeile(SP_HILFE, ({ "holo team <nr> - <name> ...",
                                 "Schueler aus dem Team nehmen" }))
-  + tabellen_zeile(SP_HILFE, ({ "holo klasse <projekt> <klasse>",
+  + tabellen_zeile(SP_HILFE, ({ "holo klasse <nr> <klasse>",
                                 "ganze Klasse ins Team aufnehmen" }))
-  + tabellen_zeile(SP_HILFE, ({ "holo sperre <projekt> an|aus",
+  + tabellen_zeile(SP_HILFE, ({ "holo sperre <nr> an|aus",
                                 "Schreibschutz fuer das Team" }))
   + tabellen_linie(SP_HILFE);
 }
@@ -56,6 +56,15 @@ static string pult_long() {
     return anzeige_text(lehrer_hilfe());
   }
   return "Ein schmales Pult mit einem Schild: 'Nur fuer Lehrer'.\n";
+}
+
+// Projektnamen nach Nummer sortiert
+static int nr_groesser(string a, string b, mapping liste) {
+  return liste[a][3] > liste[b][3];
+}
+
+static string *nach_nummer(mapping liste) {
+  return sort_array(m_indices(liste), #'nr_groesser, liste);
 }
 
 static string liste(string jahr) {
@@ -72,14 +81,15 @@ static string liste(string jahr) {
          + linie_voll();
   }
   ret += tabellen_linie(SP_LISTE)
-       + tabellen_kopf(SP_LISTE, ({ "Projekt", "Status", "Team",
+       + tabellen_kopf(SP_LISTE, ({ "Nr", "Projekt", "Status", "Team",
                                      "Gaeste" }))
        + tabellen_linie(SP_LISTE);
 
-  foreach (string name : sort_array(m_indices(l), #'>)) {
+  foreach (string name : nach_nummer(l)) {
     mixed *p = l[name];
 
     ret += tabellen_zeile(SP_LISTE, ({
+             to_string(p[3]),
              name,
              p[2] ? FARBE_GELB "gesperrt" FARBE_AUS : " ",
              sizeof(p[0]) ? implode(map(p[0], #'capitalizeAfterDot), ", ") : "-",
@@ -134,7 +144,11 @@ static void loesche_antwort(string antwort, string projekt) {
 }
 
 static int loesche_fragen(string projekt) {
-  string dir = HOLODECKD->query_projekt_dir(HOLODECKD->query_jahr(), projekt);
+  string dir;
+
+  projekt = HOLODECKD->projekt_name(HOLODECKD->query_jahr(), projekt)
+            || projekt;
+  dir     = HOLODECKD->query_projekt_dir(HOLODECKD->query_jahr(), projekt);
 
   if (!dir) {
     write("Computer: Das Projekt " + projekt + " gibt es nicht.\n");
