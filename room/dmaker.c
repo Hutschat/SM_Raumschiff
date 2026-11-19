@@ -23,17 +23,19 @@ public varargs void create_room(string file,object o) {
     ([
       INT_LONG_HEADER:
       "Du befindest dich in einem Gang des Raumschiffs Proton, das vor "
-      "langer Zeit in der Wüste Kurma abgestürzt ist. Das Schiff scheint "
+      "langer Zeit in der Wüste Nadrip abgestürzt ist. Das Schiff scheint "
       "seitdem verlassen zu sein. In der Decke leuchtet ein kaltes, weißes "
       "Licht, das unregelmäßig flackert. Nach",
          
       "osten":
-      "Westen gelangst du zurück in die zerstörte Schleuse und nach "
+      "Westen gelangst du durch ein Loch in der zerstörten Schleuse "
+      "hinaus in die Wüste und nach "
       "Osten fuehrt der Gang weiter in Schiff hinein. ",
          
       INT_LONG_DEFAULT:
       "Osten führt der Gang wieder weiter ins Schiff hinein während "
-      "sich im Westen eine zerstörte Schleuse befindet.",
+      "sich im Westen eine zerstörte Schleuse befindet. Durch ein Loch "
+      "in ihren Trümmern fällt grelles Licht herein.",
          
       INT_LONG_FOOTER:
       "An der südlichen Wand ist ein Schild angebracht.",
@@ -57,17 +59,29 @@ public varargs void create_room(string file,object o) {
     
     o->AddDetail(({"schleuse"}),
        "Dort siehst du nur noch Trümmer aus Metall, die kreuz und quer "
-       "herum liegen.");
+       "herum liegen. Durch ein Loch darin kannst du nach Westen hinaus "
+       "in die Wüste klettern.");
+
+    o->AddDetail(({"loch","oeffnung"}),
+       "Die Ränder des Lochs sind verbogen und scharfkantig. Durch das "
+       "Loch fällt grelles Licht herein, und heiße Luft weht vom Westen "
+       "herein.");
+
+    o->AddDetail(({"rand","raender"}),
+       "Vorsicht, die sind scharf!");
+
+    o->AddDetail(({"luft"}),
+       "Sie ist heiß und trocken, wie in einer Wüste.");
 
     o->AddDetail(KEYS_CEILING,
        "Die Decke ist eine einzige Fläche aus flackerndem Licht.");
 
     o->AddDetail(({"truemmer","truemmerteile"}),
-       "Verbogenes, zerrissenes Metall. Durch die Schleuse kommt hier "
-       "niemand mehr hinaus.");
+       "Verbogenes, zerrissenes Metall. Durch ein Loch darin kommst du "
+       "nach draußen.");
 
-    o->AddDetail(({"wueste","kurma","wueste kurma"}),
-       "Die Wüste Kurma liegt draußen vor dem Schiff. Von hier drinnen "
+    o->AddDetail(({"wueste","nadrip","wueste nadrip"}),
+       "Die Wüste Nadrip liegt draußen vor dem Schiff. Von hier drinnen "
        "siehst du davon nur den Sand auf dem Boden.");
 
     o->AddDetail(({"zeit"}),
@@ -78,6 +92,7 @@ public varargs void create_room(string file,object o) {
        "Was die drei Buchstaben bedeuten, weiß heute niemand mehr.");
 
     o->AddExit("osten",   REGION_ROOM "[-2+0+0]");
+    o->AddExit("westen",  "/d/gebiete/nadrip/room/w_14x3");
     break;
     
     case "[-2+0+0]":
@@ -778,7 +793,7 @@ public varargs void create_room(string file,object o) {
     o->AddDetail(({"bullauge","fenster"}),
        "Durch das runde Bullauge siehst du die Wüste.");
 
-    o->AddDetail(({"wueste","kurma","sand"}),
+    o->AddDetail(({"wueste","nadrip","sand"}),
        "Sand, so weit du sehen kannst.");
 
     o->AddDetail(({"foto","bild","rahmen"}),
@@ -792,7 +807,7 @@ public varargs void create_room(string file,object o) {
        "nicht mehr darin geschlafen.");
 
     o->AddDetail(({"logbuch","buch"}),
-       "Der letzte Eintrag lautet: Notlandung in der Wüste Kurma. Besatzung "
+       "Der letzte Eintrag lautet: Notlandung in der Wüste Nadrip. Besatzung "
        "verlässt das Schiff. Hilfe ist unterwegs.");
 
     o->AddDetail(({"eintrag"}),
