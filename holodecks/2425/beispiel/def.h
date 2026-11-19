@@ -1,6 +1,6 @@
 
 #ifndef _HOLO_BEISPIEL_H__
-#define _HOLO_BEISPIEL_H___
+#define _HOLO_BEISPIEL_H__
 
 #define MAGIERNAME "chaos"
 #define GEBIET     "holodecks/2425/beispiel"
